@@ -26,7 +26,7 @@ export default function ItemList() {
             }
         })
     } else {
-        
+
     }
 
     const buttonStyle = "inline bg-blue-950 text-amber-200 border-2 border-blue-900 rounded px-3 m-1 hover:bg-blue-800 hover:border-blue-950";
