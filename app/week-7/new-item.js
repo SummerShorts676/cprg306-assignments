@@ -1,16 +1,13 @@
 "use client"
 
-import { Catamaran } from "next/font/google";
-import { use, useState } from "react"
+import { useState } from "react"
 
+export default function NewItem( {onAddItem} ) {
 
-export default function NewItem() {
-
-    // Name Field
+    const [id, setId] = useState("") // Added it cause it changes?... I think I need this...
     const [name, setName] = useState("");
-
-    // Quantity Field (From Week 4)
     const [quantity, setQuantity] = useState(1)
+    const [category, setCategory] = useState("produce");
 
     const increment = () => {
         let currentQuantity = quantity.valueOf();
@@ -24,36 +21,37 @@ export default function NewItem() {
         }
     }
 
-    // Category Field
-    const [category, setCategory] = useState("produce");
-
-    // Form Control Functions
+    // Generate a 18 char ID
+    function generateId(length) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+    
+    const handleIdChange = (event) => setId(event.target.value); // Event handler for the thing I think I need...
     const handleNameChange = (event) => setName(event.target.value);
     const handleQuantityChange = (event) => setQuantity(event.target.value);
     const handleCategoryChange = (event) => setCategory(event.target.value);
 
-    // Form Submission Handler
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        let item = {
-            itemName: name,
-            amount: quantity,
-            type: category
+        // Item Form // Changed these so it matches what is in json file
+        const newAddObj = {
+            id: generateId(18), // Calls random string generator for 18 char
+            name: name,
+            quantity: quantity,
+            category: category
         }
 
-        // Alert
-        alert (`
-            Added Item:
-
-            Name: ${item.itemName}
-
-            Quantity: ${item.amount}
-
-            Category: ${item.type}
-            `)
+        // onAddItem prop
+        onAddItem(newAddObj);
         
         // Reset inputs
+        setId(""); //Make sure that it empties out
         setName("");
         setQuantity(1);
         setCategory("produce");
@@ -80,9 +78,10 @@ export default function NewItem() {
         decButtonStyles = notAllowedButtonStyles;
     }
 
+    // Added onClick but nothing else changes...
     return (
         <div className="bg-gray-800 p-4 w-fit rounded mx-auto mt-10">
-            <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-2 w-100">
+            <form onClick={ (event) => event.stopPropagation() } onSubmit={handleSubmit} className="grid grid-cols-2 gap-2 w-100">
                 <div className="col-span-2"> {/*  */}
                     <input 
                         type="text"
@@ -106,7 +105,6 @@ export default function NewItem() {
                     <div className="text-right">
                         <select 
                             onChange={handleCategoryChange}
-                            defaultValue="default"
                             value={category}
                             className="rounded w-40 h-10 border-2 border-gray-400 bg-white text-black pl-1"
                         >
